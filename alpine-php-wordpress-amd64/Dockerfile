@@ -1,23 +1,23 @@
-FROM yobasystems/alpine:3.23.0-amd64
+FROM yobasystems/alpine:3.24.1-amd64
 
 ARG BUILD_DATE
 ARG VCS_REF
 
 LABEL maintainer="Dominic Taylor <dominic@yoba.systems>" \
     architecture="amd64/x86_64" \
-    alpine-version="3.23.0" \
-    nginx-version="1.28.0" \
-    php-version="8.4.15" \
+    alpine-version="3.24.1" \
+    nginx-version="1.30.4" \
+    php-version="8.4.27" \
     wordpress-version="latest" \
     build="04-Dec-2025" \
     org.opencontainers.image.title="alpine-php-wordpress" \
     org.opencontainers.image.description="Wordpress container image running on Alpine Linux" \
     org.opencontainers.image.authors="Dominic Taylor <dominic@yoba.systems>" \
     org.opencontainers.image.vendor="Yoba Systems" \
-    org.opencontainers.image.version="3.23.0" \
+    org.opencontainers.image.version="3.24.1" \
     org.opencontainers.image.url="https://hub.docker.com/r/yobasystems/alpine-php-wordpress/" \
     org.opencontainers.image.source="https://github.com/yobasystems/alpine-php-wordpress" \
-    org.opencontainers.image.base.name="docker.io/yobasystems/alpine:3.23.0" \
+    org.opencontainers.image.base.name="docker.io/yobasystems/alpine:3.24.1" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
@@ -27,7 +27,7 @@ ENV TERM="xterm" \
     DB_USER=""\
     DB_PASS=""
 
-RUN apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip \
+RUN apk upgrade --no-cache && apk add --no-cache bash curl less vim nginx ca-certificates git tzdata zip \
     libmcrypt-dev zlib-dev gmp-dev \
     freetype-dev libjpeg-turbo-dev libpng-dev \
     php84-fpm php84-json php84-zlib php84-xml php84-xmlwriter php84-simplexml php84-pdo php84-phar php84-openssl \
@@ -41,7 +41,8 @@ RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php84/php.ini && \
     sed -i 's/expose_php = On/expose_php = Off/g' /etc/php84/php.ini && \
     sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd && \
     sed -i "s/nginx:x:100:101:nginx:\/var\/lib\/nginx:\/sbin\/nologin/nginx:x:100:101:nginx:\/usr:\/bin\/bash/g" /etc/passwd- && \
-    ln -s /sbin/php-fpm84 /sbin/php-fpm
+    ln -s /sbin/php-fpm84 /sbin/php-fpm && \
+    ln -s /usr/bin/php84 /usr/bin/php
 
 ADD files/nginx.conf /etc/nginx/
 ADD files/php-fpm.conf /etc/php84/
